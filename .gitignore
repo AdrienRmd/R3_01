@@ -1,0 +1,13 @@
+# Config locale / secrets
+config.local.php
+.env
+
+# Base de données
+*.sql
+*.sqlite
+
+# IDE / OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
