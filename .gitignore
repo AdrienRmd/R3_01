@@ -6,8 +6,15 @@ config.local.php
 *.sql
 *.sqlite
 
+# Cours / bureautique
+*.pptx
+*.docx
+*.pdf
+
 # IDE / OS
 .vscode/
 .idea/
 Thumbs.db
 .DS_Store
+
+.pptx
