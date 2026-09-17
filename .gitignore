@@ -3,7 +3,7 @@ config.local.php
 .env
 
 # Base de données
-*.sql
+
 *.sqlite
 
 # Cours / bureautique
