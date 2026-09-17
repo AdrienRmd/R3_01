@@ -18,3 +18,4 @@ Thumbs.db
 .DS_Store
 
 *.md
+!roadmap.md
