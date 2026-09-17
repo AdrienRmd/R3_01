@@ -1,3 +1,7 @@
+<?php
+require_once __DIR__ . '/../src/DatabaseConnection.php';
+require_once __DIR__ . '/../src/data/competences.php';
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -24,6 +28,13 @@
         <li>Heure : <?php echo htmlspecialchars(date('H:i')); ?></li>
         <li>Version de PHP : <?php echo htmlspecialchars(PHP_VERSION); ?></li>
         <li>Serveur : <?php echo htmlspecialchars($_SERVER['SERVER_SOFTWARE'] ?? 'inconnu'); ?></li>
+    </ul>
+
+    <h2>Catégories</h2>
+    <ul>
+        <?php foreach (Competences::getCategories() as $categorie): ?>
+            <li><?php echo htmlspecialchars($categorie); ?></li>
+        <?php endforeach; ?>
     </ul>
 </body>
 
