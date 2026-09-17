@@ -25,6 +25,8 @@ CREATE TABLE matieres (
     id SERIAL PRIMARY KEY,
     code VARCHAR(20) NOT NULL UNIQUE,
     libelle VARCHAR(150) NOT NULL,
+    categorie VARCHAR(50) NOT NULL
+        CHECK (categorie IN ('Langages', 'Outils', 'Environnement', 'Frameworks')),
     description TEXT,
     date_creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
