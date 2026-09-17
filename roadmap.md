@@ -19,9 +19,9 @@
 
 **Objectif : maîtriser le langage (CLI) et produire les premières pages web.**
 
-### Partie A — PHP en ligne de commande (`cli/`)
+### Partie A — PHP en ligne de commande (`bin/`)
 
-- [x] A1 — Premier script : `cli/a1_bienvenue.php`
+- [x] A1 — Premier script : `bin/a1_bienvenue.php`
 - [ ] A2 — Variables, concaténation, interpolation (`a2_fiche.php`)
 - [ ] A3 — Conditions et validation de saisie (`a3_niveau.php`) — refuser `0`, `7`, `abc`
 - [ ] A4 — Chaînes : initiales, e-mail pro, `strlen` vs `mb_strlen` (`a4_chaines.php`)
@@ -30,16 +30,16 @@
 
 ### Partie B — Premières pages (`public/`)
 
-- [x] B1 — Page d'accueil dynamique (date + version PHP) — *version test à la racine, à finaliser*
-- [ ] B2 — Données figées : `data/competences.php` (8 compétences, 3 catégories, une avec `nb_maitrises` à 0)
+- [x] B1 — Page d'accueil dynamique (date + version PHP) — `public/index.php`
+- [ ] B2 — Données figées : `src/Data/competences.php` (8 compétences, 3 catégories, une avec `nb_maitrises` à 0)
 - [ ] B3 — Liste des compétences en tableau HTML + `htmlspecialchars()`
 - [ ] B4 — Fiche d'une compétence (`fiche.php?id=N`) avec gestion des cas invalides (`?id=999`, `?id=abc`, sans paramètre)
-- [ ] B5 — Badge de couverture, fonction unique dans `inc/fonctions.php`
+- [ ] B5 — Badge de couverture, fonction unique dans `src/fonctions.php`
 - [ ] B6 — Extensions : statistiques, filtre par catégorie, tri
 
-> ⚠️ **À faire avant de reprendre** : recréer l'arborescence du TP
-> (`cli/`, `public/`, `inc/`, `data/`) supprimée lors de la mise à plat,
-> et restaurer A1 : `git checkout f266b2a -- cli/a1_bienvenue.php`.
+> ✅ **Structure niveau entreprise adoptée** : `bin/`, `public/`, `src/`, `config/`
+> (voir la correspondance détaillée plus bas). Si un corrigé du sujet exige les
+> noms imposés (`cli/`, `inc/`, `data/`), renommer à la volée avant de rendre.
 
 **Validation S1** : checklist de fin de séance du sujet, entièrement cochée.
 
@@ -51,7 +51,7 @@
 
 - [ ] Concevoir la base `skillswap` (probablement : `competence`, et tôt ou tard `collaborateur`, `maitrise`…)
 - [ ] Créer les tables et les remplir (8 compétences minimum, comme en B2)
-- [ ] Se connecter en PDO (config locale **hors git** — voir `.gitignore` : `config.local.php`)
+- [ ] Se connecter en PDO (config locale **hors git** — voir `.gitignore` : `config/config.local.php`)
 - [ ] Requêtes **préparées** systématiquement — comprendre l'injection SQL
 - [ ] Réécrire `index.php` et `fiche.php` pour lire en base
 - [ ] Prévoir la connexion MySQL : conteneur Docker du module, MySQL local du VPS, ou autre
@@ -83,7 +83,7 @@ premières requêtes d'insertion/mise à jour, jointures.
 
 **Objectif : factoriser, structurer.**
 
-- [ ] Généraliser l'usage de `inc/` (fonctions communes, comme le badge en B5)
+- [ ] Généraliser l'usage de `src/` (fonctions communes, comme le badge en B5)
 - [ ] Séparation logique / affichage, inclusions, conventions PSR détaillées
 - [ ] Probable : mise en place d'une structure type contrôleur/rendu
 
@@ -116,15 +116,39 @@ Hypothèses de montée en puissance, calées sur les trois piliers :
 | Où | Comment |
 |---|---|
 | Local | `php -S localhost:8080 -t public` depuis `R3_01/` |
-| VPS | `git pull` dans `~/R3_01` → `https://aremond.ovh/R3_01/` |
+| VPS | `git pull` dans `~/R3_01` → `https://aremond.ovh/R3_01/` (alias Apache → `~/R3_01/public`) |
 | Synchronisation | commit + push (local) → pull (VPS), à chaque fin de séance |
 | Sauvegarde | le dépôt GitHub **est** la copie hors IUT exigée par la checklist |
+
+### Structure niveau entreprise (adoptée)
+
+> Le projet utilise les conventions professionnelles (Symfony, Laravel).
+> Si un corrigé du sujet exige les noms imposés, renommer à la volée :
+> `bin/` → `cli/`, `src/` → `inc/`, `src/Data/` → `data/`.
+
+```
+mon-projet/
+├── bin/        # commandes CLI
+├── public/     # SEULE racine web, tout passe par index.php
+├── src/        # code de l'application (+ src/Data/ pour les données figées)
+├── config/     # configuration (config/config.local.php, hors git)
+└── templates/  # vues (introduites en S5, séparation logique / affichage)
+```
+
+| Projet (entreprise) | Nom du sujet (si exigé) | Rôle |
+|---|---|---|
+| `bin/` | `cli/` | scripts en ligne de commande |
+| `public/` | `public/` | identique : unique dossier exposé au web (sécurité) |
+| `src/` | `inc/` | fonctions puis classes, autoloadées par Composer (PSR-4) en pro |
+| `src/Data/` | `data/` | données figées, souvent remplacées par la base (S2) |
+| `config/` | `config.local.php` à la racine | secrets et réglages, hors git |
+| `templates/` | HTML dans les `.php` | vues séparées de la logique (objectif S5) |
 
 ### Règles d'or (acquises dès la S1, valables jusqu'à la S9)
 
 1. **Échapper** tout ce qui s'affiche : `htmlspecialchars()`
 2. **Ne jamais faire confiance** à `$_GET` / `$_POST` : valider avant d'utiliser
 3. **Requêtes préparées** dès qu'il y a une base de données (S2)
-4. **Un seul endroit** par morceau de logique : fonctions dans `inc/`
+4. **Un seul endroit** par morceau de logique : fonctions dans `src/`
 5. Nommage clair (`$competence`, pas `$c`), indentation propre, PSR
 6. Respecter les noms de fichiers imposés : les corrigés en dépendent
