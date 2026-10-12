@@ -4,8 +4,7 @@
 $titres = [];
 do {
     echo "Titre d'evenement (vide pour terminer) : ";
-    $ligne = fgets(STDIN);
-    $saisie = trim($ligne === false ? '' : $ligne); // fin de flux traitee comme saisie vide
+    $saisie = trim(fgets(STDIN));
     if ($saisie !== '') {
         $titres[] = $saisie; // ajout en fin de tableau
     }

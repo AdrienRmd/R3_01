@@ -18,9 +18,23 @@ MyEvents est le projet qui accompagne tout le module : à chaque séance, une no
 
 > **Au-delà du TP5** : le sujet annonce que les données, encore figées dans un fichier PHP, seront persistées dans une vraie base MySQL via PDO et les requêtes préparées (introduction au CM4).
 
+## Organisation des dossiers
+
+```
+R3_01/
+|- projet/                     <- ressources du module (hors TPs)
+'- tp/
+   |- roadmap.md               <- ce fichier, à la racine de tp/ (couvre tout le module)
+   |- tp1.md ... tp5.md        <- sujets des TP
+   |- tp1/                     <- TP1 terminé : TP1-cli/, myevents/, explication.md
+    '- tp2/                     <- TP2 en cours
+       '- myevents/             <- copie indépendante de l'application
+          '- lib/functions.php  <- Partie A écrite et testée
+```
+
 ---
 
-## Roadmap détaillée du TP1
+## Roadmap détaillée du TP1 — terminé
 
 Objectifs de la séance : scripts PHP en ligne de commande (variables, saisie, chaînes, tableaux), fonctions natives `array_*`, puis transposition dans une vraie page web avec `foreach` et `if/elseif/else`.
 
@@ -44,28 +58,75 @@ Objectifs de la séance : scripts PHP en ligne de commande (variables, saisie, c
 
 ---
 
-## Arborescence finale du TP1
+## Roadmap détaillée du TP2 — en cours
+
+Objectif de la séance : extraire la logique dans `lib/functions.php` (Partie A), puis brancher les pages dessus et constater le gain de la factorisation (Partie B). L'application évolue dans une copie indépendante : `tp/tp2/myevents/`.
+
+### Partie A — Écrire les fonctions de base (`lib/functions.php`) ✔
+
+- [x] **A1 — Le badge, en fonction** (`calculerBadge()`) : seuils Complet / Presque complet (≥ 0.8) / Places disponibles, garde contre la division par zéro.
+- [x] **A2 — Formater une date** (`formaterDateAffichage()`) : `DateTime::createFromFormat('Y-m-d', ...)` + ternaire de repli si la date est invalide.
+- [x] **A3 — Taux de remplissage, sécurisé** (`calculerTauxRemplissage()`) : valeur de repli 1.0 si `places <= 0`.
+- [x] **A4 — Valider un événement** (`validerEvenement()`) : titre, places, cohérence inscrits/places ; renvoie un tableau de messages d'erreurs.
+- [x] **A5 — Filtrer les événements futurs** (`filtrerEvenementsFuturs()`) : `array_filter()` + fonction fléchée, `array_values()` pour renuméroter les clés.
+- [x] **A6 — Trier sans modifier l'original** (`trierEvenementsParDate()`) : tri sur une copie, `usort()` + `strtotime()` + `<=>`.
+
+> Partie A conforme au sujet, sans éléments superflus.
+
+### Partie B — Intégrer et réutiliser
+
+- [ ] **B1 — Brancher les fonctions dans `index.php`** : `require_once 'lib/functions.php'`, appels à `calculerBadge()`, `formaterDateAffichage()`, `filtrerEvenementsFuturs()` + `trierEvenementsParDate()`.
+- [ ] **B2 — Brancher les fonctions dans `event.php`** : fin de la duplication ; test du seuil « presque complet » changé à un seul endroit.
+- [ ] **B3 — Statistiques réutilisables** (`statistiquesEvenements()`) : nombre, totalPlaces, tauxGlobal, evenementPlusDemande en un seul appel.
+- [ ] **B4 — Ajouter un événement par référence** (`ajouterEvenement(array &$events, ...)`) : valide, modifie `$events` via `&`, renvoie les erreurs.
+- [ ] **B5 — Recherche multi-critères** (`rechercherEvenements()`) : mot-clé insensible à la casse + lieu exact, paramètres `?string` facultatifs.
+
+### Bonus
+
+- [ ] **C1 — Fonction récursive** (`sommeRecursive()`) : cas de base + appel récursif sur `array_slice()`.
+- [ ] **C2 — Pagination** (`paginerEvenements()`) : `array_slice()` + `ceil()`, réutilisée au TP3.
+- [ ] **C3 — Mémoriser un résultat (static)** : mémoïsation de `statistiquesEvenements()`.
+
+---
+
+## Arborescence actuelle
 
 ```
 R3_01/
-|- TP1-cli/
-|  |- a1_hello.php
-|  |- a2_fiche.php
-|  |- a3_places.php
-|  |- a4_titre.php
-|  |- a5_liste_titres.php
-|  '- a6_stats.php
-'- myevents/
-   |- index.php
-   |- event.php
-   |- data/
-   |  '- events.php
-   '- inc/
-      |- header.inc.php
-      '- footer.inc.php
+'- tp/
+   |- roadmap.md
+   |- tp1.md ... tp5.md
+   |- tp1/
+   |  |- explication.md
+   |  |- TP1-cli/
+   |  |  |- a1_hello.php
+   |  |  |- a2_fiche.php
+   |  |  |- a3_places.php
+   |  |  |- a4_titre.php
+   |  |  |- a5_liste_titres.php
+   |  |  '- a6_stats.php
+   |  '- myevents/
+   |     |- index.php
+   |     |- event.php
+   |     |- data/
+   |     |  '- events.php
+   |     '- inc/
+   |        |- header.inc.php
+   |        '- footer.inc.php
+   '- tp2/
+      '- myevents/
+         |- index.php
+         |- event.php
+         |- data/
+         |  '- events.php
+         |- lib/
+         |  '- functions.php
+         '- inc/
+            |- header.inc.php
+            '- footer.inc.php
 ```
 
-`TP1-cli/` contient les scripts d'entraînement en ligne de commande ; `myevents/` est le projet web qui évoluera jusqu'au TP5. Le fichier `phpinfo.php` du TP0 a été supprimé après la vérification, comme l'exige le sujet.
+`tp/tp1/` est le TP1 terminé (scripts CLI + première version web, figés). `tp/tp2/myevents/` en est la copie indépendante : c'est elle qui évoluera jusqu'au TP5. Le fichier `phpinfo.php` du TP0 a été supprimé après la vérification, comme l'exige le sujet.
 
 ---
 
@@ -83,11 +144,13 @@ R3_01/
 - Aucune donnée utilisateur n'étant encore saisie, `htmlspecialchars()` n'a pas été utilisé : la protection arrive avec les formulaires (TP3) et l'audit sécurité (TP5).
 - Le tri du bonus B6 (`usort`) modifie `$events` en place : le TP2 introduira `trierEvenementsParDate()`, qui trie une copie sans toucher à l'original.
 
+**TP2 — en cours (dans `tp/tp2/`) :** Partie A terminée — les six fonctions de base vivent dans `tp/tp2/myevents/lib/functions.php` ; `index.php` et `event.php` y sont encore les versions TP1, non branchées. Restent la Partie B (branchement, statistiques, ajout par référence, recherche) et les bonus C1 à C3.
+
 ---
 
 ## Et maintenant ?
 
-1. **TP2 — Fonctions & factorisation** : extraire toute la logique (badge, format de date, taux, validation, tri, statistiques) dans `lib/functions.php`, incluse avec `require_once`, puis brancher `index.php` et `event.php` sur ces fonctions. Test clé : changer le seuil « presque complet » à un seul endroit et voir les deux pages suivre.
+1. **TP2 — Partie B (prochaine étape)** : brancher les fonctions dans `tp/tp2/myevents/index.php` et `event.php` (`require_once 'lib/functions.php'`, appels à `calculerBadge()`, `formaterDateAffichage()`, `filtrerEvenementsFuturs()`, `trierEvenementsParDate()`), puis écrire `statistiquesEvenements()`, `ajouterEvenement()` (par référence) et `rechercherEvenements()`. Test clé : changer le seuil « presque complet » à un seul endroit et voir les deux pages suivre. Bonus C1 à C3 ensuite.
 2. **TP3 — Formulaires, HTTP & validation** : formulaire d'ajout en POST, erreurs de validation, `event.php?id=...`, page `recherche.php` en GET.
 3. **TP4 — Sessions & cookies** : connexion/déconnexion, protection de l'ajout, préférences mémorisées.
 4. **TP5 — Sécurité** : XSS, `filter_input()`, audit et durcissement complet.
