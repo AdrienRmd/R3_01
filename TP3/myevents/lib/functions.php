@@ -176,3 +176,48 @@ function rechercherEvenements(array $events, ?string $motCle = null, ?string $li
             && ($lieu === null || $e['lieu'] === $lieu)
     ));
 }
+
+/**
+ * Bonus C1 (TP2) - Une fonction récursive.
+ * Somme des éléments sans array_sum() : cas de base = tableau vide,
+ * cas récursif = premier élément + appel sur le reste du tableau.
+ */
+function sommeRecursive(array $nombres): int|float
+{
+    // Cas de base : un tableau vide ne contient plus rien à additionner
+    if (count($nombres) === 0) {
+        return 0;
+    }
+
+    // Cas récursif : premier élément + somme du reste du tableau
+    return $nombres[0] + sommeRecursive(array_slice($nombres, 1));
+}
+
+/**
+ * Bonus C2 (TP2) - Pagination d'une liste d'événements.
+ * Renvoie la portion de la page demandée et le nombre total de pages.
+ * La page 1 démarre à l'index 0, d'où la conversion ($page - 1) * $parPage.
+ */
+function paginerEvenements(array $events, int $page, int $parPage = 5): array
+{
+    $totalPages = (int) ceil(count($events) / $parPage);
+    if ($totalPages < 1) {
+        $totalPages = 1;
+    }
+
+    // Une page hors bornes (0, négative ou trop grande) est ramenée dans les limites
+    if ($page < 1) {
+        $page = 1;
+    }
+    if ($page > $totalPages) {
+        $page = $totalPages;
+    }
+
+    $debut = ($page - 1) * $parPage;
+
+    return array(
+        'items' => array_slice($events, $debut, $parPage),
+        'totalPages' => $totalPages,
+        'page' => $page,
+    );
+}

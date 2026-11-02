@@ -22,6 +22,22 @@ if ($lieuRecherche !== '') {
 // B2 : la recherche se fait avec la fonction du TP2
 $resultats = rechercherEvenements($events, $critereMotCle, $critereLieu);
 $nombreResultats = count($resultats);
+
+// Bonus C2 - pagination des résultats : on n'affiche que 5 cartes par page.
+// Le numéro de page arrive dans l'URL, comme les critères de recherche.
+$pageBrute = $_GET['page'] ?? '1';
+$page = 1;
+if (ctype_digit($pageBrute) && (int) $pageBrute >= 1) {
+    $page = (int) $pageBrute;
+}
+
+$pagination = paginerEvenements($resultats, $page, 5);
+$resultatsPage = $pagination['items'];
+$totalPages = $pagination['totalPages'];
+$page = $pagination['page']; // page réellement affichée, ramenée dans les bornes
+
+// Bonus C2 - les liens de pagination conservent le mot-clé et le lieu
+$parametresPagination = array('q' => $motCle, 'lieu' => $lieuRecherche);
 ?>
 <h2>Rechercher un evenement</h2>
 
@@ -48,10 +64,12 @@ $nombreResultats = count($resultats);
     <button type="submit">Rechercher</button>
 </form>
 
-<p><?php echo $nombreResultats; ?> resultat(s) trouve(s)</p>
+<p><?php echo $nombreResultats; ?> resultat(s) trouve(s)
+    <!-- Bonus C2 - position dans la pagination -->
+    - page <?php echo $page; ?>/<?php echo $totalPages; ?></p>
 
 <?php if ($nombreResultats > 0): ?>
-<?php foreach ($resultats as $event):
+<?php foreach ($resultatsPage as $event):
 $badge = calculerBadge($event);
 ?>
 <div class="w3-card w3-margin-bottom w3-padding">
@@ -61,6 +79,24 @@ $badge = calculerBadge($event);
     <p><?php echo formaterDateAffichage($event['date']); ?> - <?php echo htmlspecialchars($event['lieu']); ?></p>
 </div>
 <?php endforeach; ?>
+
+<?php
+// Bonus C2 - liens page precedente / page suivante : les trois parametres
+// (q, lieu, page) doivent rester presents dans l'URL a chaque fois
+if ($totalPages > 1):
+?>
+<p>
+    <?php if ($page > 1): ?>
+        <?php $parametresPagination['page'] = $page - 1; ?>
+        <a class="w3-button w3-light-grey" href="recherche.php?<?php echo http_build_query($parametresPagination); ?>">&laquo; Page precedente</a>
+    <?php endif; ?>
+
+    <?php if ($page < $totalPages): ?>
+        <?php $parametresPagination['page'] = $page + 1; ?>
+        <a class="w3-button w3-light-grey" href="recherche.php?<?php echo http_build_query($parametresPagination); ?>">Page suivante &raquo;</a>
+    <?php endif; ?>
+</p>
+<?php endif; ?>
 <?php else: ?>
 <!-- B2 : message clair si aucun resultat -->
 <div class="w3-panel w3-pale-yellow">

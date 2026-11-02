@@ -39,6 +39,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // A2 : la fonction du TP2 valide ET ajoute, elle renvoie les erreurs
     $erreurs = ajouterEvenement($events, $nouvelEvenement);
 
+    // Bonus C1 - Post/Redirect/Get : après un ajout réussi, on redirige
+    // immédiatement. Un F5 ne renvoie donc plus le formulaire, et l'événement
+    // ne peut pas être ajouté deux fois. Les erreurs, elles, doivent rester
+    // affichées sur la même page pour que le formulaire soit réaffiché rempli.
+    if (count($erreurs) === 0) {
+        header('Location: index.php');
+        exit; // tres important : stoppe le script juste après la redirection
+    }
+
     // A4 : on garde les valeurs saisies seulement si la validation a echoue
     if (count($erreurs) > 0) {
         $titreSaisi = $titre;
